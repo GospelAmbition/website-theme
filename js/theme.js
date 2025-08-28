@@ -54,19 +54,9 @@
             }
         });
 
-        // Add class to header on scroll
-        $(window).scroll(function() {
-            var scroll = $(window).scrollTop();
-            if (scroll >= 100) {
-                $('.site-header').addClass('scrolled');
-            } else {
-                $('.site-header').removeClass('scrolled');
-            }
-        });
-
         // Animate elements on scroll
         function animateOnScroll() {
-            $('.tool-card, .post-card').each(function() {
+            $('.post-card').each(function() {
                 var elementTop = $(this).offset().top;
                 var elementBottom = elementTop + $(this).outerHeight();
                 var viewportTop = $(window).scrollTop();
@@ -119,48 +109,6 @@
             $(this).removeClass('error');
         });
 
-        // Lazy loading for images
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        if (img.dataset.src) {
-                            img.src = img.dataset.src;
-                            img.classList.remove('lazy');
-                            imageObserver.unobserve(img);
-                        }
-                    }
-                });
-            });
-
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
-
-        // Search functionality enhancement
-        $('.search-form input[type="search"]').on('focus', function() {
-            $(this).closest('.search-form').addClass('focused');
-        }).on('blur', function() {
-            $(this).closest('.search-form').removeClass('focused');
-        });
-
-        // Back to top button
-        if ($('.back-to-top').length) {
-            $(window).scroll(function() {
-                if ($(this).scrollTop() > 300) {
-                    $('.back-to-top').fadeIn();
-                } else {
-                    $('.back-to-top').fadeOut();
-                }
-            });
-
-            $('.back-to-top').on('click', function(e) {
-                e.preventDefault();
-                $('html, body').animate({scrollTop: 0}, 600);
-            });
-        }
     });
 
 })(jQuery);

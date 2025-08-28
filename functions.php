@@ -103,37 +103,6 @@ function gospel_ambition_excerpt_more($more) {
 add_filter('excerpt_more', 'gospel_ambition_excerpt_more');
 
 /**
- * Add custom body classes
- */
-function gospel_ambition_body_classes($classes) {
-    // Add class for pages without sidebar
-    if (!is_active_sidebar('sidebar-1')) {
-        $classes[] = 'no-sidebar';
-    }
-    
-    // Add class for front page
-    if (is_front_page()) {
-        $classes[] = 'home-page';
-    }
-    
-    // Add class for blog page
-    if (is_home() || is_category() || is_tag() || is_author() || is_date()) {
-        $classes[] = 'blog-page';
-    }
-    
-    return $classes;
-}
-add_filter('body_class', 'gospel_ambition_body_classes');
-
-/**
- * Customize the read more link
- */
-function gospel_ambition_read_more_link() {
-    return '<a class="read-more-link" href="' . get_permalink() . '">Read More</a>';
-}
-add_filter('the_content_more_link', 'gospel_ambition_read_more_link');
-
-/**
  * Add meta boxes for homepage sections
  */
 function gospel_ambition_add_meta_boxes() {
