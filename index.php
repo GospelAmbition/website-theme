@@ -10,7 +10,7 @@ get_header(); ?>
         <div class="blog-header">
             <div class="container">
                 <h1 class="blog-title"><?php echo esc_html(get_the_title(get_option('page_for_posts'))); ?></h1>
-                <p class="blog-description">Stay updated with the latest news and insights from Gospel Ambition</p>
+                <!-- <p class="blog-description">Stay updated with the latest news and insights from Gospel Ambition</p> -->
             </div>
         </div>
     <?php endif; ?>

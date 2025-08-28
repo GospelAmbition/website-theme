@@ -10,15 +10,14 @@ get_header(); ?>
         <!-- Left Sidebar with Blog Posts -->
         <aside class="blog-sidebar">
             <div class="sidebar-content">
-                <h3>Recent Blog Posts</h3>
+                <h3>Articles</h3>
                 <?php
-                // Get other blog posts from 'go-blog' category
+                // Get all articles from 'go-blog' category in ascending order
                 $sidebar_query = new WP_Query(array(
                     'category_name' => 'go-blog',
-                    'posts_per_page' => 8,
-                    'post__not_in' => array(get_the_ID()),
+                    'posts_per_page' => -1,
                     'orderby' => 'date',
-                    'order' => 'DESC'
+                    'order' => 'ASC'
                 ));
                 
                 if ($sidebar_query->have_posts()) : ?>
@@ -33,17 +32,12 @@ get_header(); ?>
                                     <?php endif; ?>
                                     <div class="sidebar-post-content">
                                         <h4 class="sidebar-post-title"><?php the_title(); ?></h4>
-                                        <time class="sidebar-post-date"><?php echo get_the_date('M j, Y'); ?></time>
                                     </div>
                                 </a>
                             </li>
                         <?php endwhile; ?>
                     </ul>
                 <?php endif; wp_reset_postdata(); ?>
-                
-                <div class="sidebar-blog-link">
-                    <a href="<?php echo esc_url(home_url('/blog/')); ?>" class="view-all-posts">View All Posts</a>
-                </div>
             </div>
         </aside>
 
