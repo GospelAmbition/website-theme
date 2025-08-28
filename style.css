@@ -115,6 +115,7 @@ body {
 .main-navigation ul {
     list-style: none;
     display: flex;
+    gap: 2rem;
     margin: 0;
     padding: 0;
 }
