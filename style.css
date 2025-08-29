@@ -395,6 +395,15 @@ article.single-post {
     margin-bottom: 1.5rem;
 }
 
+.page-body ul, .page-body ol {
+    margin-bottom: 1.5rem;
+    margin-left: 1.5rem;
+}
+
+.page-body li {
+    margin-bottom: 0.5rem;
+}
+
 .page-body img {
     max-width: 100%;
     height: auto;
@@ -450,6 +459,15 @@ article.single-post {
 
 .post-body p {
     margin-bottom: 1.5rem;
+}
+
+.post-body ul, .post-body ol {
+    margin-bottom: 1.5rem;
+    margin-left: 1.5rem;
+}
+
+.post-body li {
+    margin-bottom: 0.5rem;
 }
 
 .post-body img {
