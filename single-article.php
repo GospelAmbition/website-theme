@@ -48,11 +48,11 @@ get_header(); ?>
                     <article id="post-<?php the_ID(); ?>" <?php post_class('single-post'); ?>>
                     <header class="post-header">
                         <h1 class="single-post-title"><?php the_title(); ?></h1>
-                        <div class="single-post-meta">
+                        <!-- <div class="single-post-meta">
                             <time datetime="<?php echo esc_attr(get_the_date('c')); ?>">
                                 <?php echo esc_html(get_the_date('F j, Y')); ?>
                             </time>
-                        </div>
+                        </div> -->
                     </header>
 
                     <?php if (has_post_thumbnail()) : ?>
@@ -66,9 +66,9 @@ get_header(); ?>
                     </div>
 
                     <?php
-                    // Article navigation
-                    $prev_post = get_previous_post();
-                    $next_post = get_next_post();
+                    // Article navigation using custom order
+                    $prev_post = get_previous_article();
+                    $next_post = get_next_article();
                     
                     if ($prev_post || $next_post) :
                     ?>

@@ -268,3 +268,69 @@ function save_article_order($post_id) {
     }
 }
 add_action('save_post', 'save_article_order');
+
+/**
+ * Get previous article based on menu_order
+ */
+function get_previous_article($post_id = null) {
+    if (!$post_id) {
+        global $post;
+        $post_id = $post->ID;
+    }
+    
+    $current_post = get_post($post_id);
+    if (!$current_post || $current_post->post_type !== 'article') {
+        return null;
+    }
+    
+    // Get all articles ordered the same way as the sidebar
+    $all_articles = get_posts(array(
+        'post_type' => 'article',
+        'posts_per_page' => -1,
+        'orderby' => 'menu_order date',
+        'order' => 'ASC',
+        'post_status' => 'publish'
+    ));
+    
+    // Find current article and return previous one
+    for ($i = 0; $i < count($all_articles); $i++) {
+        if ($all_articles[$i]->ID == $post_id && $i > 0) {
+            return $all_articles[$i - 1];
+        }
+    }
+    
+    return null;
+}
+
+/**
+ * Get next article based on menu_order
+ */
+function get_next_article($post_id = null) {
+    if (!$post_id) {
+        global $post;
+        $post_id = $post->ID;
+    }
+    
+    $current_post = get_post($post_id);
+    if (!$current_post || $current_post->post_type !== 'article') {
+        return null;
+    }
+    
+    // Get all articles ordered the same way as the sidebar
+    $all_articles = get_posts(array(
+        'post_type' => 'article',
+        'posts_per_page' => -1,
+        'orderby' => 'menu_order date',
+        'order' => 'ASC',
+        'post_status' => 'publish'
+    ));
+    
+    // Find current article and return next one
+    for ($i = 0; $i < count($all_articles); $i++) {
+        if ($all_articles[$i]->ID == $post_id && $i < count($all_articles) - 1) {
+            return $all_articles[$i + 1];
+        }
+    }
+    
+    return null;
+}

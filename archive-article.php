@@ -8,9 +8,9 @@ get_header(); ?>
 <main class="site-main">
     <div class="blog-header">
         <div class="container">
-            <h1 class="blog-title">Articles</h1>
+            <h1 class="blog-title">Gospel Ambition</h1>
             <div class="archive-description">
-                <p>Explore our collection of articles on faith, ministry, and Christian living.</p>
+                <p>Fulfilling the Great Commission in this generation, with you</p>
             </div>
         </div>
     </div>
