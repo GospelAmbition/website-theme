@@ -1001,3 +1001,22 @@ textarea.error {
         max-width: 100%;
     }
 }
+
+/* WordPress Block: Verse */
+.wp-block-verse {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    white-space: pre-wrap;
+    padding: 2rem 1.5rem;
+    background: #f8f9fa;
+    border-left: 4px solid var(--primary-color);
+    border-radius: 5px;
+    margin: 2rem 0;
+    line-height: 1.8;
+    color: #444;
+}
+
+.wp-block-verse p {
+    margin: 0;
+    line-height: inherit;
+}
