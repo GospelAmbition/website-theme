@@ -25,11 +25,6 @@ get_header(); ?>
                         <?php while ($sidebar_query->have_posts()) : $sidebar_query->the_post(); ?>
                             <li class="sidebar-post-item">
                                 <a href="<?php the_permalink(); ?>" class="sidebar-post-link">
-                                    <?php if (has_post_thumbnail()) : ?>
-                                        <div class="sidebar-post-thumb">
-                                            <?php the_post_thumbnail('thumbnail'); ?>
-                                        </div>
-                                    <?php endif; ?>
                                     <div class="sidebar-post-content">
                                         <h4 class="sidebar-post-title"><?php the_title(); ?></h4>
                                     </div>
