@@ -40,8 +40,6 @@
                             'container'      => false,
                             'depth'          => 2,
                         ));
-                    } else {
-                        gospel_ambition_fallback_menu();
                     }
                     ?>
                 </nav>
