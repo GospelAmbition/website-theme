@@ -246,6 +246,11 @@ function article_order_meta_box_callback($post) {
 }
 
 function save_article_order($post_id) {
+    // Only run for article post type
+    if (get_post_type($post_id) !== 'article') {
+        return;
+    }
+    
     if (!isset($_POST['article_order_nonce']) || !wp_verify_nonce($_POST['article_order_nonce'], 'save_article_order')) {
         return;
     }
@@ -260,11 +265,18 @@ function save_article_order($post_id) {
     
     if (isset($_POST['article_order'])) {
         update_post_meta($post_id, '_article_order', sanitize_text_field($_POST['article_order']));
-        // Also update menu_order for consistency
+        
+        // Prevent infinite loop by removing the action before updating
+        remove_action('save_post', 'save_article_order');
+        
+        // Update menu_order for consistency
         wp_update_post(array(
             'ID' => $post_id,
             'menu_order' => intval($_POST['article_order'])
         ));
+        
+        // Re-add the action after updating
+        add_action('save_post', 'save_article_order');
     }
 }
 add_action('save_post', 'save_article_order');
