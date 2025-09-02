@@ -41,12 +41,6 @@ get_header(); ?>
                                 <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                             </h2>
                             
-                            <div class="post-meta">
-                                <time datetime="<?php echo esc_attr(get_the_date('c')); ?>">
-                                    <?php echo esc_html(get_the_date()); ?>
-                                </time>
-                            </div>
-                            
                             <div class="post-excerpt">
                                 <?php the_excerpt(); ?>
                             </div>
