@@ -547,6 +547,9 @@ article.single-post {
     font-size: 0.9rem;
     color: #bdc3c7;
 }
+.footer-navigation ul li {
+    list-style: none;
+}
 
 /* Search Form Styles */
 .search-form {
@@ -950,10 +953,6 @@ textarea.error {
     .footer-links {
         flex-direction: column;
         gap: 1rem;
-    }
-
-    .footer-navigation ul li {
-        list-style: none;
     }
     
     .error-404-content {
