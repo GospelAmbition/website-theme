@@ -5,24 +5,15 @@
                 <p>Fulfilling the Great Commission in this generation, together</p>
             </div>
 
-            <?php if (has_nav_menu('footer')) : ?>
-                <nav class="footer-navigation">
-                    <?php
-                    wp_nav_menu(array(
-                        'theme_location' => 'footer',
-                        'menu_class'     => 'footer-links',
-                        'depth'          => 1,
-                    ));
-                    ?>
-                </nav>
-            <?php else : ?>
-                <div class="footer-links">
-                    <a href="<?php echo esc_url(home_url('/blog/')); ?>">Blog</a>
-                    <a href="<?php echo esc_url(home_url('/about/')); ?>">About</a>
-                    <a href="<?php echo esc_url(home_url('/contact/')); ?>">Contact Us</a>
-                    <a href="<?php echo esc_url(home_url('/give/')); ?>">Give</a>
-                </div>
-            <?php endif; ?>
+            <nav class="footer-navigation">
+                <?php
+                wp_nav_menu(array(
+                    'theme_location' => 'footer',
+                    'menu_class'     => 'footer-links',
+                    'depth'          => 1,
+                ));
+                ?>
+            </nav>
 
             <?php if (is_active_sidebar('footer-widgets')) : ?>
                 <div class="footer-widgets">
