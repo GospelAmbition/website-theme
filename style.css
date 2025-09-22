@@ -439,6 +439,9 @@ article.single-post {
     height: auto;
     border-radius: 5px;
 }
+.page-body figure.size-full img {
+    width: 100%;
+}
 
 /* Full width page styling */
 .full-width .page-featured-image {

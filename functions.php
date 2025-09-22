@@ -346,3 +346,96 @@ function get_next_article($post_id = null) {
     
     return null;
 }
+
+/**
+ * Add Custom CSS Meta Box for Pages
+ */
+function add_page_custom_css_meta_box() {
+    add_meta_box(
+        'page-custom-css',
+        'Custom CSS',
+        'page_custom_css_meta_box_callback',
+        'page',
+        'side',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'add_page_custom_css_meta_box');
+
+/**
+ * Custom CSS Meta Box Callback
+ */
+function page_custom_css_meta_box_callback($post) {
+    wp_nonce_field('save_page_custom_css', 'page_custom_css_nonce');
+    $custom_css = get_post_meta($post->ID, '_page_custom_css', true);
+    ?>
+    <p>
+        <label for="page_custom_css" style="font-weight: bold;">Add custom CSS for this page:</label>
+    </p>
+    <textarea 
+        id="page_custom_css" 
+        name="page_custom_css" 
+        rows="10" 
+        style="width: 100%; font-family: 'Courier New', monospace; font-size: 12px;"
+        placeholder="/* Enter your custom CSS here */&#10;.my-custom-class {&#10;    color: #bd1218;&#10;    font-size: 18px;&#10;}"
+    ><?php echo esc_textarea($custom_css); ?></textarea>
+    <p style="margin-top: 10px; font-size: 12px; color: #666;">
+        <strong>Note:</strong> This CSS will only apply to this specific page. Don't include &lt;style&gt; tags.
+    </p>
+    <?php
+}
+
+/**
+ * Save Custom CSS Meta Box Data
+ */
+function save_page_custom_css($post_id) {
+    // Only run for page post type
+    if (get_post_type($post_id) !== 'page') {
+        return;
+    }
+    
+    // Verify nonce
+    if (!isset($_POST['page_custom_css_nonce']) || !wp_verify_nonce($_POST['page_custom_css_nonce'], 'save_page_custom_css')) {
+        return;
+    }
+    
+    // Skip autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    // Check user permissions
+    if (!current_user_can('edit_page', $post_id)) {
+        return;
+    }
+    
+    // Save the custom CSS
+    if (isset($_POST['page_custom_css'])) {
+        $custom_css = wp_strip_all_tags($_POST['page_custom_css']);
+        update_post_meta($post_id, '_page_custom_css', $custom_css);
+    } else {
+        delete_post_meta($post_id, '_page_custom_css');
+    }
+}
+add_action('save_post', 'save_page_custom_css');
+
+/**
+ * Output Custom CSS in Page Head
+ */
+function output_page_custom_css() {
+    // Only on single pages
+    if (!is_page()) {
+        return;
+    }
+    
+    global $post;
+    $custom_css = get_post_meta($post->ID, '_page_custom_css', true);
+    
+    if (!empty($custom_css)) {
+        echo '<style type="text/css" id="page-custom-css-' . $post->ID . '">' . "\n";
+        echo '/* Custom CSS for page: ' . get_the_title($post->ID) . ' */' . "\n";
+        echo $custom_css . "\n";
+        echo '</style>' . "\n";
+    }
+}
+add_action('wp_head', 'output_page_custom_css');
