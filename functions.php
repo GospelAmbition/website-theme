@@ -47,15 +47,18 @@ add_action('after_setup_theme', 'gospel_ambition_setup');
  * Enqueue scripts and styles
  */
 function gospel_ambition_scripts() {
+    // Get theme version from style.css
+    $theme_version = wp_get_theme()->get('Version');
+
     // Enqueue theme stylesheet
-    wp_enqueue_style('gospel-ambition-style', get_stylesheet_uri(), array(), '1.0.0');
-    
+    wp_enqueue_style('gospel-ambition-style', get_stylesheet_uri(), array(), $theme_version);
+
     // Enqueue Google Fonts
-    wp_enqueue_style('gospel-ambition-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', array(), '1.0.0');
-    
+    wp_enqueue_style('gospel-ambition-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', array(), null);
+
     // Enqueue theme JavaScript
-    wp_enqueue_script('gospel-ambition-script', get_template_directory_uri() . '/js/theme.js', array('jquery'), '1.0.0', true);
-    
+    wp_enqueue_script('gospel-ambition-script', get_template_directory_uri() . '/js/theme.js', array('jquery'), $theme_version, true);
+
 
 }
 add_action('wp_enqueue_scripts', 'gospel_ambition_scripts');
@@ -185,167 +188,107 @@ function gospel_ambition_remove_comments_admin_bar() {
 add_action('init', 'gospel_ambition_remove_comments_admin_bar');
 
 /**
- * Register Articles Custom Post Type
+ * Add Custom Page Order Meta Box
  */
-function create_articles_post_type() {
-    register_post_type('article', array(
-        'labels' => array(
-            'name' => 'Articles',
-            'singular_name' => 'Article',
-            'menu_name' => 'Articles',
-            'add_new' => 'Add New',
-            'add_new_item' => 'Add New Article',
-            'edit_item' => 'Edit Article',
-            'new_item' => 'New Article',
-            'view_item' => 'View Article',
-            'search_items' => 'Search Articles',
-            'not_found' => 'No articles found',
-            'not_found_in_trash' => 'No articles found in trash'
-        ),
-        'public' => true,
-        'publicly_queryable' => true,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'query_var' => true,
-        'rewrite' => array('slug' => 'articles'),
-        'capability_type' => 'post',
-        'has_archive' => true,
-        'hierarchical' => false,
-        'menu_position' => 5,
-        'menu_icon' => 'dashicons-media-document',
-        'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'author', 'page-attributes'),
-        'show_in_rest' => true
-    ));
-}
-add_action('init', 'create_articles_post_type');
-
-/**
- * Add custom order meta box for articles
- */
-function add_article_order_meta_box() {
+function add_page_order_meta_box() {
     add_meta_box(
-        'article-order',
-        'Article Order',
-        'article_order_meta_box_callback',
-        'article',
+        'page-order',
+        'Page Order',
+        'page_order_meta_box_callback',
+        'page',
         'side',
         'high'
     );
 }
-add_action('add_meta_boxes', 'add_article_order_meta_box');
+add_action('add_meta_boxes', 'add_page_order_meta_box');
 
-function article_order_meta_box_callback($post) {
-    wp_nonce_field('save_article_order', 'article_order_nonce');
-    $order = get_post_meta($post->ID, '_article_order', true);
+/**
+ * Page Order Meta Box Callback
+ */
+function page_order_meta_box_callback($post) {
+    wp_nonce_field('save_page_order', 'page_order_nonce');
+    $order = $post->menu_order;
+
+    // Use 10 as default for new pages
+    if ($order == 0 && $post->post_status == 'auto-draft') {
+        $order = 10;
+    }
     ?>
     <p>
-        <label for="article_order">Order (lower numbers appear first):</label><br>
-        <input type="number" id="article_order" name="article_order" value="<?php echo esc_attr($order); ?>" min="0" style="width: 100%;" />
+        <label for="page_order" style="font-weight: bold;">Order:</label><br>
+        <input type="number" id="page_order" name="page_order" value="<?php echo esc_attr($order); ?>" min="0" style="width: 100%;" />
+    </p>
+    <p style="font-size: 12px; color: #666;">
+        Lower numbers appear first in the sidebar menu. Default is 10. Pages with the same order are sorted alphabetically.
     </p>
     <?php
 }
 
-function save_article_order($post_id) {
-    // Only run for article post type
-    if (get_post_type($post_id) !== 'article') {
+/**
+ * Save Page Order Meta Box Data
+ */
+function save_page_order($post_id) {
+    // Only run for page post type
+    if (get_post_type($post_id) !== 'page') {
         return;
     }
-    
-    if (!isset($_POST['article_order_nonce']) || !wp_verify_nonce($_POST['article_order_nonce'], 'save_article_order')) {
+
+    // Verify nonce
+    if (!isset($_POST['page_order_nonce']) || !wp_verify_nonce($_POST['page_order_nonce'], 'save_page_order')) {
         return;
     }
-    
+
+    // Skip autosave
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
-    
-    if (!current_user_can('edit_post', $post_id)) {
+
+    // Check user permissions
+    if (!current_user_can('edit_page', $post_id)) {
         return;
     }
-    
-    if (isset($_POST['article_order'])) {
-        update_post_meta($post_id, '_article_order', sanitize_text_field($_POST['article_order']));
-        
+
+    // Save the order
+    if (isset($_POST['page_order'])) {
+        $order = intval($_POST['page_order']);
+
         // Prevent infinite loop by removing the action before updating
-        remove_action('save_post', 'save_article_order');
-        
-        // Update menu_order for consistency
+        remove_action('save_post', 'save_page_order');
+
+        // Update menu_order
         wp_update_post(array(
             'ID' => $post_id,
-            'menu_order' => intval($_POST['article_order'])
+            'menu_order' => $order
         ));
-        
+
         // Re-add the action after updating
-        add_action('save_post', 'save_article_order');
+        add_action('save_post', 'save_page_order');
     }
 }
-add_action('save_post', 'save_article_order');
+add_action('save_post', 'save_page_order');
 
 /**
- * Get previous article based on menu_order
+ * Set default menu_order for new pages
  */
-function get_previous_article($post_id = null) {
-    if (!$post_id) {
-        global $post;
-        $post_id = $post->ID;
+function set_default_page_order($post_id, $post, $update) {
+    // Only for new pages (not updates)
+    if ($update || $post->post_type !== 'page') {
+        return;
     }
-    
-    $current_post = get_post($post_id);
-    if (!$current_post || $current_post->post_type !== 'article') {
-        return null;
-    }
-    
-    // Get all articles ordered the same way as the sidebar
-    $all_articles = get_posts(array(
-        'post_type' => 'article',
-        'posts_per_page' => -1,
-        'orderby' => 'menu_order date',
-        'order' => 'ASC',
-        'post_status' => 'publish'
-    ));
-    
-    // Find current article and return previous one
-    for ($i = 0; $i < count($all_articles); $i++) {
-        if ($all_articles[$i]->ID == $post_id && $i > 0) {
-            return $all_articles[$i - 1];
-        }
-    }
-    
-    return null;
-}
 
-/**
- * Get next article based on menu_order
- */
-function get_next_article($post_id = null) {
-    if (!$post_id) {
-        global $post;
-        $post_id = $post->ID;
+    // If menu_order is 0 (default), set it to 10
+    if ($post->menu_order == 0) {
+        remove_action('wp_insert_post', 'set_default_page_order', 10);
+
+        wp_update_post(array(
+            'ID' => $post_id,
+            'menu_order' => 10
+        ));
+
+        add_action('wp_insert_post', 'set_default_page_order', 10, 3);
     }
-    
-    $current_post = get_post($post_id);
-    if (!$current_post || $current_post->post_type !== 'article') {
-        return null;
-    }
-    
-    // Get all articles ordered the same way as the sidebar
-    $all_articles = get_posts(array(
-        'post_type' => 'article',
-        'posts_per_page' => -1,
-        'orderby' => 'menu_order date',
-        'order' => 'ASC',
-        'post_status' => 'publish'
-    ));
-    
-    // Find current article and return next one
-    for ($i = 0; $i < count($all_articles); $i++) {
-        if ($all_articles[$i]->ID == $post_id && $i < count($all_articles) - 1) {
-            return $all_articles[$i + 1];
-        }
-    }
-    
-    return null;
 }
+add_action('wp_insert_post', 'set_default_page_order', 10, 3);
 
 /**
  * Add Custom CSS Meta Box for Pages

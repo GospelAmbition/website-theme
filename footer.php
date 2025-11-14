@@ -2,7 +2,7 @@
         <div class="footer-content">
             <div class="footer-description">
                 <h3><?php bloginfo('name'); ?></h3>
-                <p>Fulfilling the Great Commission in this generation, together</p>
+                <p><?php bloginfo('description'); ?></p>
             </div>
 
             <nav class="footer-navigation">
