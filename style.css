@@ -67,6 +67,9 @@ a {
 .site-branding {
     display: flex;
     align-items: center;
+    background: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
 }
 
 .site-branding .custom-logo-link {
