@@ -370,10 +370,10 @@ function output_page_custom_css() {
     if (!is_page()) {
         return;
     }
-    
+
     global $post;
     $custom_css = get_post_meta($post->ID, '_page_custom_css', true);
-    
+
     if (!empty($custom_css)) {
         echo '<style type="text/css" id="page-custom-css-' . $post->ID . '">' . "\n";
         echo '/* Custom CSS for page: ' . get_the_title($post->ID) . ' */' . "\n";
@@ -382,3 +382,59 @@ function output_page_custom_css() {
     }
 }
 add_action('wp_head', 'output_page_custom_css');
+
+/**
+ * Register Theme Customizer Settings
+ */
+function gospel_ambition_customize_register($wp_customize) {
+    // Add Colors Section
+    $wp_customize->add_section('gospel_ambition_colors', array(
+        'title'    => __('Theme Colors', 'gospel-ambition'),
+        'priority' => 30,
+    ));
+
+    // Primary Color Setting
+    $wp_customize->add_setting('primary_color', array(
+        'default'           => '#2f3a31',
+        'sanitize_callback' => 'sanitize_hex_color',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'primary_color', array(
+        'label'    => __('Primary Color', 'gospel-ambition'),
+        'section'  => 'gospel_ambition_colors',
+        'settings' => 'primary_color',
+    )));
+
+    // Secondary Color Setting
+    $wp_customize->add_setting('secondary_color', array(
+        'default'           => '#cbc5ba',
+        'sanitize_callback' => 'sanitize_hex_color',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'secondary_color', array(
+        'label'    => __('Secondary Color', 'gospel-ambition'),
+        'section'  => 'gospel_ambition_colors',
+        'settings' => 'secondary_color',
+    )));
+}
+add_action('customize_register', 'gospel_ambition_customize_register');
+
+/**
+ * Output Custom Colors CSS
+ */
+function gospel_ambition_custom_colors() {
+    $primary_color = get_theme_mod('primary_color', '#2f3a31');
+    $secondary_color = get_theme_mod('secondary_color', '#cbc5ba');
+
+    ?>
+    <style type="text/css" id="gospel-ambition-custom-colors">
+        :root {
+            --primary-color: <?php echo esc_attr($primary_color); ?>;
+            --secondary-color: <?php echo esc_attr($secondary_color); ?>;
+        }
+    </style>
+    <?php
+}
+add_action('wp_head', 'gospel_ambition_custom_colors');
